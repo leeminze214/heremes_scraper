@@ -1,14 +1,16 @@
 import json
 import chromedriver_binary
 import os
-
 import config
 import helpers
 import utils
 
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from time import sleep
+
+from webdriver_manager.chrome import ChromeDriverManager
 
 def main():
     while (True):
@@ -19,12 +21,14 @@ def main():
 
         sleep(config.RECURRENCE_INTERVAL_INMINUTES * 60)
 
+
+
 def check_stock_changes():
 
 	products = get_product_list()
 
 	if len(products) > 0:
-		driver = webdriver.Chrome()
+		driver = webdriver.Chrome(ChromeDriverManager().install())
 
 	for product in products:
 		try:
@@ -33,7 +37,7 @@ def check_stock_changes():
 				driver.get(product["url"])
 				sleep(2)
 				
-				found = driver.find_elements_by_css_selector(product["lookfor"])
+				found = driver.find_element(By.CSS_SELECTOR,(product["lookfor"]));
 				
 				if len(found) > 0 and bool(product["notifyiffound"]) == True:
 					send_email = True
